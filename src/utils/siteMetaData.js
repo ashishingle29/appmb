@@ -7,7 +7,7 @@ const siteMetadata = {
     description: 'the all stock dertail at one place appmb.',
     language: 'en-us',
     theme: 'system', // system, dark or light
-    siteUrl: 'http://localhost:3000', // your website URL
+    siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://appmb.org.in', // your website URL
     siteLogo: '/logo.png',
     socialBanner: '/social-banner.png', // add social banner in the public folder
     email: 'appmb@gmail.com', 

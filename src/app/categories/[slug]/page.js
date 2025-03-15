@@ -80,6 +80,79 @@
 // export default CategoryPage;
 
 
+// import BlogLayoutThree from "@/src/components/Blog/BlogLayoutThree";
+// import Categories from "@/src/components/Blog/Categories";
+// import siteMetadata from "@/src/utils/siteMetaData";
+
+// const CategoryPage = async ({ params }) => {
+//   const { slug } = params;
+
+//   // Fetch all categories
+//   const getCategory = await fetch(`${siteMetadata?.siteUrl}/api/categories`);
+//   const allCat = await getCategory.json();
+
+//   // Include "all" category by default
+//   const allCategories = [{name : "all", slug: "all"}, ...allCat.map((cat) => cat)];
+
+
+//   console.log(allCategories, "allCategories")
+//   // Fetch blogs based on category slug
+//   const getBlogs = await fetch(
+//     `${siteMetadata?.siteUrl}/api/posts?category=${slug}`
+//   );
+//   const blogs = await getBlogs.json();;
+//   console.log(blogs, "getBlogs")
+
+//   return (
+//     <article className="mt-12 flex flex-col text-dark dark:text-light">
+//       <div className="px-5 sm:px-10 md:px-24 sxl:px-32 flex flex-col">
+//         <h1 className="mt-6 font-semibold text-2xl md:text-4xl lg:text-5xl">
+//           #{slug?.replaceAll("-", " ")}
+//         </h1>
+//         <span className="mt-2 inline-block">
+//           Discover more categories and expand your knowledge!
+//         </span>
+//       </div>
+
+//       {/* Render categories */}
+//       <Categories categories={allCategories} currentSlug={slug} module="categories" />
+
+//       {/* Render blog posts */}
+//       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-16 mt-5 sm:mt-10 md:mt-24 sxl:mt-32 px-5 sm:px-10 md:px-24 sxl:px-32">
+//         {blogs.map((blog) => (
+//           <article key={blog._id} className="col-span-1 row-span-1 relative">
+//             <BlogLayoutThree blog={blog} />
+//           </article>
+//         ))}
+//       </div>
+//     </article>
+//   );
+// };
+
+// export async function generateStaticParams() {
+//   // Fetch categories from API
+//   const res = await fetch(`${siteMetadata?.siteUrl}/api/categories`);
+//   const categories = await res.json();
+
+//   const paths = [{ slug: "all" }, ...categories.map((cat) => ({ slug: cat.slug }))];
+
+//   return paths;
+// }
+
+// export async function generateMetadata({ params }) {
+//   const { slug } = params;
+  
+//   return {
+//     title: `${slug.replaceAll("-", " ")} Blogs`,
+//     description: `Learn more about ${
+//       slug === "all" ? "Latest Updates" : slug.replaceAll("-", " ")
+//     } through our collection of expert blogs and tutorials.`,
+//   };
+// }
+
+// export default CategoryPage;
+
+
 import BlogLayoutThree from "@/src/components/Blog/BlogLayoutThree";
 import Categories from "@/src/components/Blog/Categories";
 import siteMetadata from "@/src/utils/siteMetaData";
@@ -88,20 +161,40 @@ const CategoryPage = async ({ params }) => {
   const { slug } = params;
 
   // Fetch all categories
-  const getCategory = await fetch(`${siteMetadata?.siteUrl}/api/categories`);
-  const allCat = await getCategory.json();
+  let allCategories = [{ name: "all", slug: "all" }];
+  try {
+    const getCategory = await fetch(`${siteMetadata?.siteUrl}/api/categories`);
+    if (getCategory.ok) {
+      const allCat = await getCategory.json();
+      allCategories = [
+        { name: "all", slug: "all" },
+        ...allCat.map((cat) => cat),
+      ];
+    } else {
+      console.error("Failed to fetch categories:", getCategory.statusText);
+    }
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+  }
 
-  // Include "all" category by default
-  const allCategories = [{name : "all", slug: "all"}, ...allCat.map((cat) => cat)];
+  console.log(allCategories, "allCategories");
 
-
-  console.log(allCategories, "allCategories")
   // Fetch blogs based on category slug
-  const getBlogs = await fetch(
-    `${siteMetadata?.siteUrl}/api/posts?category=${slug}`
-  );
-  const blogs = await getBlogs.json();;
-  console.log(blogs, "getBlogs")
+  let blogs = [];
+  try {
+    const getBlogs = await fetch(
+      `${siteMetadata?.siteUrl}/api/posts?category=${slug}`
+    );
+    if (getBlogs.ok) {
+      blogs = await getBlogs.json();
+    } else {
+      console.error("Failed to fetch blogs:", getBlogs.statusText);
+    }
+  } catch (error) {
+    console.error("Error fetching blogs:", error);
+  }
+
+  console.log(blogs, "getBlogs");
 
   return (
     <article className="mt-12 flex flex-col text-dark dark:text-light">
@@ -130,18 +223,25 @@ const CategoryPage = async ({ params }) => {
 };
 
 export async function generateStaticParams() {
-  // Fetch categories from API
-  const res = await fetch(`${siteMetadata?.siteUrl}/api/categories`);
-  const categories = await res.json();
+  try {
+    const res = await fetch(`${siteMetadata?.siteUrl}/api/categories`);
+    if (!res.ok) {
+      console.error("Failed to fetch categories:", res.statusText);
+      return [{ slug: "all" }]; // Fallback value to prevent build failure
+    }
 
-  const paths = [{ slug: "all" }, ...categories.map((cat) => ({ slug: cat.slug }))];
-
-  return paths;
+    const categories = await res.json();
+    const paths = [{ slug: "all" }, ...categories.map((cat) => ({ slug: cat.slug }))];
+    return paths;
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    return [{ slug: "all" }]; // Fallback value to prevent build failure
+  }
 }
 
 export async function generateMetadata({ params }) {
   const { slug } = params;
-  
+
   return {
     title: `${slug.replaceAll("-", " ")} Blogs`,
     description: `Learn more about ${

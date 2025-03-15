@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import dbConnect from "@/src/utils/dbConnect";
-import Contact from "@/src/models/Contact";
+import dbConnect from "@/src/lib/mongodb";
+import Contact from "@/src/lib/models/Contact";
 
 export async function PATCH(req, { params }) {
   await dbConnect();
