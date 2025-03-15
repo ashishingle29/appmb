@@ -2,7 +2,7 @@
   "name": "developer-blog-starter-code",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://appmb.org.in",
+  "homepage": "https://appmb.vercel.app/",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
