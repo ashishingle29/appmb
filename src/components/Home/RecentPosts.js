@@ -1,10 +1,11 @@
-import { sortBlogs } from "@/src/utils";
+// import { sortBlogs } from "@/src/utils";
 import Link from "next/link";
 import React from "react";
 import BlogLayoutThree from "../Blog/BlogLayoutThree";
 
 const RecentPosts = ({ blogs }) => {
-  const sortedBlogs = sortBlogs(blogs);
+  console.log(blogs, "blogs");
+  // const sortedBlogs = sortBlogs(blogs);
   
   return (
     <section className="w-full  mt-16 sm:mt-24  md:mt-32 px-5 sm:px-10 md:px-24  sxl:px-32 flex flex-col items-center justify-center">
@@ -21,13 +22,23 @@ const RecentPosts = ({ blogs }) => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 grid-rows-2 gap-16 mt-16">
-        {sortedBlogs.slice(4, 10).map((blog, index) => {
-          return (
-            <article key={index} className="col-span-1 row-span-1 relative">
-              <BlogLayoutThree blog={blog} />
-            </article>
-          );
-        })}
+        {
+          blogs?.length > 0 ? (
+            blogs.map((blog, index) => {
+              return (
+                <article key={index} className="col-span-1 row-span-1 relative">
+                  <BlogLayoutThree blog={blog} />
+                </article>
+              );
+            })
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <h3 className="text-xl font-medium text-dark dark:text-light">
+                No recent posts
+              </h3>
+            </div>
+          )
+        }
       </div>
     </section>
   );
