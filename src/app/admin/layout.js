@@ -11,9 +11,9 @@ export default async function AdminLayout({ children }) {
   }
 
   return (
-    <div className="flex h-screen">
+    <div className="flex">
       <Sidebar />
-      <div className="flex-1 p-2">{children}</div>
+      <div className="flex-1 p-2 border-t">{children}</div>
     </div>
   );
 }

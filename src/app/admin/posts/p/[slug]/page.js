@@ -20,6 +20,9 @@ import Code from "@editorjs/code";
 import Table from "@editorjs/table";
 // import LinkTool from "@editorjs/link";
 import Button from "editorjs-button";
+import { MagnetIcon } from "lucide-react";
+import MediaManagerModal from "@/src/components/Admin/MediaManagerModal";
+import { NO_IMAGE_URL } from "@/src/utils/constants";
 
 const uploadImageByUrl = async (e) => {
   let link = new Promise((resolve, reject) => {
@@ -79,6 +82,9 @@ export default function PostsPage() {
     featuredImage: "",
     isPublished: false,
   });
+
+  const [modalOpen, setModalOpen] = useState(false);
+  
 
   // useEffect(() => {
   //   const editor = new EditorJS({
@@ -153,7 +159,7 @@ export default function PostsPage() {
             target: "_blank", // Open in new tab
           },
         },
-        
+
         // AnyButton: {
         //   class: AnyButton,
         //   inlineToolbar: false,
@@ -347,11 +353,10 @@ export default function PostsPage() {
                 setPostData((prev) => ({
                   ...prev,
                   title: e.target.value,
-                  slug: e.target.value.toLowerCase().replace(/\s+/g, "-"),
+                  // slug: e.target.value.toLowerCase().replace(/\s+/g, "-"),
                 }))
               }
             />
-            {/* <Editor onChange={handleEditorChange} content={postData?.content} /> */}
             <div
               id="textEditor"
               className="bg-gray-100 p-4 rounded-lg min-h-[300px]"
@@ -360,7 +365,34 @@ export default function PostsPage() {
 
           {/* Post Settings */}
           <div className="bg-gray-800 rounded-lg">
-            <div className="border-b border-gray-700">
+            <div className="border-b border-gray-700 mb-2">
+              <h3 className="text-lg font-semibold mb-2">Slug</h3>
+              <div className="flex items-center gap-2 mb-2">
+                <input
+                  type="text"
+                  className="w-full bg-gray-700 rounded-lg"
+                  value={postData.slug}
+                  onChange={(e) =>
+                    setPostData((prev) => ({
+                      ...prev,
+                      slug: e.target.value.toLowerCase().replace(/\s+/g, "-"),
+                    }))
+                  }
+                />
+                <button
+                  onClick={() => {
+                    setPostData((prev) => ({
+                      ...prev,
+                      slug: postData.title.toLowerCase().replace(/\s+/g, "-"),
+                    }));
+                  }}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                >
+                  <MagnetIcon size={16} className="inline mr-1" />
+                </button>
+              </div>
+            </div>
+            <div className="border-b border-gray-700 mb-2">
               <label className="block text-md font-semibold mb-2">
                 Meta Description
               </label>
@@ -376,7 +408,7 @@ export default function PostsPage() {
                 }
               />
             </div>
-            <div className="border-b border-gray-700">
+            <div className="border-b border-gray-700 mb-2">
               <label className="block text-md font-semibold mb-2">
                 Post Status:
               </label>
@@ -393,53 +425,74 @@ export default function PostsPage() {
               />
               <span>{postData.isPublished ? "published" : "Draft"}</span>
             </div>
-            <label className="block text-md font-semibold mb-2">Category</label>
-            <select
-              className="w-full p-2 mb-4 bg-gray-700 rounded-lg"
-              value={postData.category?._id}
-              onChange={(e) =>
-                setPostData((prev) => ({ ...prev, category: e.target.value }))
-              }
-            >
-              <option value="">Select Category</option>
-              {categories.map((cat) => (
-                <option key={cat._id} value={cat._id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
-
-            <label className="block text-md font-semibold mb-2">Tags</label>
-            <div className="flex flex-wrap gap-2 mb-4">
-              {tags.map((tag) => (
-                <label key={tag._id} className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="mr-2"
-                    checked={postData.tags.find((t) => t?._id === tag._id)}
-                    onChange={(e) => {
-                      const newTags = e.target.checked
-                        ? [...postData.tags, tag._id]
-                        : postData.tags.filter((id) => id !== tag._id);
-                      setPostData((prev) => ({ ...prev, tags: newTags }));
-                    }}
-                  />
-                  {tag.name}
-                </label>
-              ))}
+            <div className="border-b border-gray-700 mb-2">
+              <label className="block text-md font-semibold mb-2">
+                Category
+              </label>
+              <select
+                className="w-full p-2 mb-4 bg-gray-700 rounded-lg"
+                value={postData.category?._id}
+                onChange={(e) =>
+                  setPostData((prev) => ({ ...prev, category: e.target.value }))
+                }
+              >
+                <option value="">Select Category</option>
+                {categories.map((cat) => (
+                  <option key={cat._id} value={cat._id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
             </div>
-
-            <h4 className="text-md font-semibold mb-2">Featured Image</h4>
-            {postData?.featuredImage && (
+            <div className="border-b border-gray-700 mb-2">
+              <label className="block text-md font-semibold mb-2">Tags</label>
+              <div className="flex flex-wrap gap-2 mb-2">
+                {tags.map((tag) => (
+                  <label key={tag._id} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      className="mr-2"
+                      checked={postData.tags.find((t) => t?._id === tag._id)}
+                      onChange={(e) => {
+                        const newTags = e.target.checked
+                          ? [...postData.tags, tag._id]
+                          : postData.tags.filter((id) => id !== tag._id);
+                        setPostData((prev) => ({ ...prev, tags: newTags }));
+                      }}
+                    />
+                    {tag.name}
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div className="border-b border-gray-700 mb-2">
+              <h4 className="text-md font-semibold mb-2">Featured Image</h4>
               <img
-                src={postData?.featuredImage}
-                alt={postData.title}
-                width="1200"
-                height="900"
+                src={postData?.featuredImage || NO_IMAGE_URL}
+                alt={postData.title || "Featured Image"}
+                className="w-full h-64 object-cover rounded mb-2"
+                loading="lazy"
+                error={NO_IMAGE_URL}
               />
-            )}
-            <MediaUploader onUpload={handleImageUpload} usageType="post" />
-            <MediaLibrary onSelect={handleImageUpload} />
+
+              <button
+                className="px-4 py-2 bg-slate-700 text-white rounded mb-2"
+                onClick={() => setModalOpen(true)}
+              >
+                Use Media
+              </button>
+
+              <MediaManagerModal
+                isOpen={modalOpen}
+                onClose={() => setModalOpen(false)}
+                onSelect={(media) => handleImageUpload(media)}
+                usageType="post"
+                selectedImage={postData?.featuredImage}
+              />
+
+              {/* <MediaUploader onUpload={handleImageUpload} usageType="post" />
+              <MediaLibrary onSelect={handleImageUpload} /> */}
+            </div>
           </div>
         </div>
       ) : (

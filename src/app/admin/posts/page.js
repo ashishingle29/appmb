@@ -119,6 +119,9 @@ export default function Posts() {
       {/* Heading & Add Button */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Manage Posts</h2>
+        <button className="bg-blue-500 p-2 rounded text-white">
+          <Link href="/admin/posts/p/0">Add New Post</Link>
+        </button>
       </div>
       {/* Posts Table */}
       <CommonMaterialReactTable columns={columns} data={postsList} />
