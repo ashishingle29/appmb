@@ -21,7 +21,7 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="w-64 h-full bg-black text-white border-r border-gray-700 shadow-xl">
+    <div className="w-64 bg-black text-white border-r border-gray-700 shadow-xl">
       <div className="p-5 text-lg font-bold border-b border-gray-700">
         Admin Panel
       </div>
