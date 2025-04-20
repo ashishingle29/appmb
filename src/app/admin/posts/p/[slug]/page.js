@@ -330,12 +330,12 @@ export default function PostsPage() {
           >
             Publish Post
           </button>
-          <button
+          {/* <button
             onClick={() => setPreviewMode(!previewMode)}
             className="bg-blue-500 px-4 py-2 rounded-lg text-black font-bold transition hover:bg-blue-600"
           >
             {previewMode ? "Back to Edit" : "Preview Post"}
-          </button>
+          </button> */}
         </div>
       </div>
 
