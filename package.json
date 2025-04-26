@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "NODE_ENV=production node server.js"
+    "start": "cross-env NEXT_PUBLIC_NODE_ENV=production node server.js"
   },
   "dependencies": {
     "@editorjs/code": "^2.9.3",
@@ -62,6 +62,7 @@
     "tailwindcss": "^3.4.17"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "encoding": "^0.1.13",
     "sharp": "^0.32.6",
     "velite": "^0.2.1"
